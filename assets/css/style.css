@@ -1,0 +1,22 @@
+body {
+    background: url(../images/background.png) no-repeat center center fixed;
+}
+
+.logo {
+    height: 25%;
+    width: auto;
+}
+
+.subHead {
+    color: #e21d0f;
+    margin-top: 0;
+    padding: 0;
+    position: relative;
+    top: -50px;
+    font-size: 3em;
+}
+
+.jumbotron {
+    position: inherit;
+    bottom: 100%;
+}
