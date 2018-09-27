@@ -60,6 +60,27 @@ let incorrect = 0;
 let unanswered = 0;
 let questionTimer = 30;
 let answerTimer = 7;
+let interval;
+
+// Countdown function
+let countdownRun = function(){
+    interval = setInterval(decrement, 1000);
+};
+
+let decrement = function(){
+    questionTimer--;
+
+      $(".timer").text("Time Remaining: " + questionTimer);
+      if (questionTimer === 0) {
+        unanswered ++;
+        stop();
+        
+      }
+};
+
+let stop = function(){
+    clearInterval(interval);
+};
 
 // Display question/answers on DOM
 let display = function(){
@@ -92,21 +113,13 @@ let correctScreen = function (){
     $(".a1").html("<img src=" + questions[i].image + " />");
 };
 
+
 // Incorrect Screen
 let incorrectScreen = function (){
     $(".question").text(questions[1].incorrect);
     // Fix image path
     $(".a1").html("<img src=" + questions[i].image + " />");
 };
-
-// Loop through questions 
-for (i=0; i<questions.length; i++) {
-    clearDom();
-    display();
-    // Set timer for 30 sec
-    $(document).click(answerCheck());
-    // Stay on answer screen for 7 seconds   
-}
 
 // Clear DOM 
 let clearDom = function(){
@@ -129,5 +142,26 @@ let gameOver = function (){
         StartGame()
     }));
 };
+
+// Start Game
+let startGame = function (){
+    // Loop through questions 
+    for (i=0; i<questions.length; i++) {
+        clearDom();
+        display();
+        if (questionTimer == 0) {
+            unanswered ++;
+
+        } else {
+            $(".answers").click(answerCheck);
+        }
+        
+        // Stay on answer screen for 7 seconds   
+    }
+    
+};
+
+countdownRun();
+$(".question").click(startGame);
 
 });
