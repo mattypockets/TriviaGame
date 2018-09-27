@@ -8,7 +8,7 @@ const question1 = {
     false3 : "Grey Fox",
     answer : "Otacon",
     incorrect : "The correct answer is Otacon",
-    image : "../images/otacon.jpg",
+    image : "assets/images/otacon.jpg",
 };
 
 const question2 = {
@@ -18,7 +18,7 @@ const question2 = {
     false2 : "Zeke",
     false3 : "Fox",
     incorrect : "The correct anser is Rex",
-    image : "../images/rex.jpg",
+    image : "assets/images/rex.jpg",
 };
 
 const question3 = {
@@ -28,7 +28,7 @@ const question3 = {
     answer : "Outer Heaven",
     false3 : "The Patriots",
     incorrect : "The correct anser is Outer Heaven",
-    image : "../images/outerHeaven.png",
+    image : "assets/images/outerHeaven.png",
 };
 
 const question4 = {
@@ -38,7 +38,7 @@ const question4 = {
     false2: "Liquid Snake",
     false3: "Punished Snake",
     incorrect : "The correct answer is Solidus Snake",
-    image : "../images.solidus.jpg",
+    image : "assets/images.solidus.jpg",
 };
 
 const question5 = {
@@ -48,7 +48,7 @@ const question5 = {
     false2: "Outer Heaven",
     false3: "Diamond Dogs",
     incorrect : "The correct answer is Les Enfants Terrible",
-    image : "../images/family.jpg",
+    image : "assets/images/family.jpg",
 };
 
 // Bundle Question objects into an array
@@ -59,11 +59,18 @@ let correct = 0;
 let incorrect = 0;
 let unanswered = 0;
 let questionTimer = 30;
-let answerTimer = 7;
+let answerTimer = 5;
 let interval;
+let questionCounter = 0;
+let clicked = false;
 
-// Countdown function
-let countdownRun = function(){
+// Stop Timer
+let stop = function(){
+    clearInterval(interval);
+};
+
+// Question Countdown function
+let questionCountdown = function(){
     interval = setInterval(decrement, 1000);
 };
 
@@ -71,58 +78,98 @@ let decrement = function(){
     questionTimer--;
 
       $(".timer").text("Time Remaining: " + questionTimer);
+      console.log(questionTimer)
       if (questionTimer === 0) {
-        unanswered ++;
-        stop();
-        
+        stop();        
       }
 };
 
-let stop = function(){
-    clearInterval(interval);
+// Answer Countdown function
+let answerCountdown = function(){
+    interval = setInterval(answerDecrement, 1000);
 };
+
+let answerDecrement = function(){
+    answerTimer--;
+
+      $(".timer").text("Time Remaining: " + answerTimer);
+      if (answerTimer === 0) {
+        stop();
+      }
+};
+
 
 // Display question/answers on DOM
 let display = function(){
-     $(".question").text(questions[i].question);
-     $(".a1").text(questions[i].answer);
-     $(".a2").text(questions[i].false1);
-     $(".a3").text(questions[i].false2);
-     $(".a4").text(questions[i].false3);
+     $(".question").text(questions[questionCounter].question);
+     $(".a1").text(questions[questionCounter].answer);
+     $(".a2").text(questions[questionCounter].false1);
+     $(".a3").text(questions[questionCounter].false2);
+     $(".a4").text(questions[questionCounter].false3);
 };
 
-// Every 30 seconds, display a new question
+// Time Up Screen
+let timeUpScreen = function(){
+    $(".question").text("Too Slow! " + questions[questionCounter].incorrect);
+    // Fix image path
+    $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
+}
+
+// Time Up Function
+let timeUp = function (){
+    unanswered++;
+    clearDom();
+    timeUpScreen();
+    answerCountdown();
+    if (answerCountdown == 0) {
+        questionCounter ++;
+        startGame();
+    }
+}
 
 // Check if answer is correct or incorrect
 let answerCheck = function(){
-    if (this === (questions[i].answer)) {
+    clicked = true;
+    if (this === (questions[questionCounter].answer)) {
         correct++;
         clearDom();
         correctScreen();
+        answerCountdown();
+        if (questionCounter > 5){
+            questionCounter ++;
+            startGame();
+        }
     } else {
         incorrect++;
         clearDom();
         incorrectScreen();
+        answerCountdown();
+        if (questionCounter > 5){
+            qusetionCounter++;
+            startGame();
+        }
     }
 };
 
 // Correct Screen
 let correctScreen = function (){
+
     $(".question").text("That's Right!");
     // Fix image path
-    $(".a1").html("<img src=" + questions[i].image + " />");
+    $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
 };
 
 
 // Incorrect Screen
 let incorrectScreen = function (){
-    $(".question").text(questions[1].incorrect);
+    $(".question").text(questions[questionCounter].incorrect);
     // Fix image path
-    $(".a1").html("<img src=" + questions[i].image + " />");
+    $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
 };
 
 // Clear DOM 
 let clearDom = function(){
+    $(".timer").text("");
     $(".question").text("");
     $(".a1").text("");
     $(".a2").text("");
@@ -139,29 +186,70 @@ let gameOver = function (){
     $(".a4").text("Play Again?")
 
     if ($(".a4").click(function(){
-        StartGame()
+        startGame()
     }));
 };
 
-// Start Game
-let startGame = function (){
-    // Loop through questions 
-    for (i=0; i<questions.length; i++) {
-        clearDom();
-        display();
-        if (questionTimer == 0) {
-            unanswered ++;
+let test = function(){
+    console.log("test")
 
-        } else {
-            $(".answers").click(answerCheck);
+    if (true) {
+        answerCheck();
+    }   else if (questionTimer == 0) {
+        timeUp();
         }
-        
-        // Stay on answer screen for 7 seconds   
-    }
-    
+}
+
+$(".answers").click(test);
+
+let gameLoop = function(){
+    clearDom();
+    display();
+    questionCountdown();
+    // test();
+    // if ($(".answers").click) {
+    //     answerCheck();
+    // }   else if (questionTimer == 0) {
+    //     timeUp();
+    //     }
 };
 
-countdownRun();
+let startGame = function() {
+    if  (questionCounter === 0) {
+        gameLoop();
+    } else if (questionCounter === 1) {
+        gameLoop();
+    } else if (questionCounter === 2) {
+        gameLoop();
+    } else if (questionCounter === 3) {
+        gameLoop();
+    } else if (questionCounter === 4) {
+        gameLoop();
+    } else { gameOver(); }
+};
+    
+
+
 $(".question").click(startGame);
 
 });
+
+
+
+// Start Game
+// let startGame = function (){
+//     // Loop through questions 
+//     for (i=0; i<questions.length; i++) {
+//         clearDom();
+//         display();
+//         //questionCountdown();
+//         if (questionTimer === 0) {
+//             timeUp();
+//         } else if ($(".answers").click) {
+//             answerCheck();
+//         }
+        
+   
+//     }
+    
+// };
