@@ -58,8 +58,8 @@ const questions = [question1, question2, question3, question4, question5];
 let correct = 0;
 let incorrect = 0;
 let unanswered = 0;
-let questionTimer = 30;
-let answerTimer = 5;
+var questionTimer = 30;
+var answerTimer = 5;
 let interval;
 let questionCounter = 0;
 let clicked = false;
@@ -78,8 +78,9 @@ let decrement = function(){
     questionTimer--;
 
       $(".timer").text("Time Remaining: " + questionTimer);
-      console.log(questionTimer)
       if (questionTimer === 0) {
+        // Confirmed that the if statement is running but stop function will not run for some reason.
+        console.log(questionTimer);
         stop();        
       }
 };
@@ -111,7 +112,6 @@ let display = function(){
 // Time Up Screen
 let timeUpScreen = function(){
     $(".question").text("Too Slow! " + questions[questionCounter].incorrect);
-    // Fix image path
     $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
 }
 
@@ -121,9 +121,12 @@ let timeUp = function (){
     clearDom();
     timeUpScreen();
     answerCountdown();
-    if (answerCountdown == 0) {
+    if (questionCounter < 4 && answerTimer === 0) {
         questionCounter ++;
+        clicked = false;
         startGame();
+    } else if (questionCounter === 4) {
+        gameOver()
     }
 }
 
@@ -135,19 +138,23 @@ let answerCheck = function(){
         clearDom();
         correctScreen();
         answerCountdown();
-        if (questionCounter > 5){
+        if (questionCounter < 4 && answerTimer === 0){
             questionCounter ++;
+            clicked = false;
             startGame();
-        }
+        } else if (questionCounter === 4) {
+            gameOver()}
     } else {
         incorrect++;
         clearDom();
         incorrectScreen();
         answerCountdown();
-        if (questionCounter > 5){
+        if (questionCounter < 4 && answerTimer === 0){
             qusetionCounter++;
+            clicked = false;
             startGame();
-        }
+        } else if (questionCounter === 4) {
+            gameOver()}
     }
 };
 
@@ -155,7 +162,6 @@ let answerCheck = function(){
 let correctScreen = function (){
 
     $(".question").text("That's Right!");
-    // Fix image path
     $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
 };
 
@@ -163,7 +169,6 @@ let correctScreen = function (){
 // Incorrect Screen
 let incorrectScreen = function (){
     $(".question").text(questions[questionCounter].incorrect);
-    // Fix image path
     $(".a1").html("<img src='" + questions[questionCounter].image + "'/>");
 };
 
@@ -190,8 +195,8 @@ let gameOver = function (){
     }));
 };
 
-let test = function(){
-    console.log("test")
+// Run click event
+let clicker = function(){
 
     if (true) {
         answerCheck();
@@ -200,20 +205,20 @@ let test = function(){
         }
 }
 
-$(".answers").click(test);
 
+// Run through main loop of the game
 let gameLoop = function(){
-    clearDom();
-    display();
-    questionCountdown();
-    // test();
-    // if ($(".answers").click) {
-    //     answerCheck();
-    // }   else if (questionTimer == 0) {
-    //     timeUp();
-    //     }
+    clearDom();  //Clear Screen
+    display(); // Display question/answers
+    questionCountdown(); //Start 30 second timer
+    // $(".answers").click(clicker);
+    if (questionTimer === 0){ // If timer reaches 0, run timeUp function
+        timeUp();
+    } else ($(".answers").click(clicker)) //Otherwise, if an answer is clicked, check to see if it's the correct one
 };
 
+
+// Go through every question set one by one
 let startGame = function() {
     if  (questionCounter === 0) {
         gameLoop();
@@ -235,21 +240,9 @@ $(".question").click(startGame);
 });
 
 
+// I'm at a complete loss about how to fix my game.
+// Staying after class helped a little but I guess I don't fully understand controlling timers and click events
+// I also didn't fully understand how we fixed the click event initially so I'm not sure how to continue from here.
 
-// Start Game
-// let startGame = function (){
-//     // Loop through questions 
-//     for (i=0; i<questions.length; i++) {
-//         clearDom();
-//         display();
-//         //questionCountdown();
-//         if (questionTimer === 0) {
-//             timeUp();
-//         } else if ($(".answers").click) {
-//             answerCheck();
-//         }
-        
-   
-//     }
-    
-// };
+// Ultimately, it seems like the timers werent updating the time variables correctly so the rest of the function wouldn't continue.
+// I tried various solutions but nothing seemed to work as intended.
